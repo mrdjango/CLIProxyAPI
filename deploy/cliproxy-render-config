@@ -1,0 +1,62 @@
+#!/usr/bin/env python3
+"""Render /var/lib/cliproxy/config.yaml from the template.
+
+The client key comes from /var/lib/cliproxy/client-key (created once) and the Claude
+token from agent-cli-to-api's CLAUDE_CODE_OAUTH_TOKEN, so both gateways use one token.
+The service is restarted afterwards so the new config takes effect.
+"""
+import json
+import os
+import secrets
+import subprocess
+import tempfile
+
+TEMPLATE = "/etc/cliproxyapi/config.yaml.tmpl"
+CONFIG = "/var/lib/cliproxy/config.yaml"
+CLIENT_KEY = "/var/lib/cliproxy/client-key"
+AGENT_ENV = "/etc/agent-cli-to-api.env"
+
+
+def read_env_value(path: str, name: str) -> str:
+    with open(path, encoding="utf-8") as f:
+        for line in f:
+            key, sep, value = line.strip().partition("=")
+            if sep and key == name:
+                return value.strip().strip("'\"")
+    return ""
+
+
+def main() -> None:
+    if not os.path.exists(CLIENT_KEY):
+        fd = os.open(CLIENT_KEY, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+        with os.fdopen(fd, "w") as f:
+            f.write("cpa-" + secrets.token_urlsafe(32) + "\n")
+    with open(CLIENT_KEY, encoding="utf-8") as f:
+        client_key = f.read().strip()
+
+    claude_token = read_env_value(AGENT_ENV, "CLAUDE_CODE_OAUTH_TOKEN")
+    if not claude_token.startswith("sk-ant-oat"):
+        raise SystemExit(f"CLAUDE_CODE_OAUTH_TOKEN missing or not an sk-ant-oat token in {AGENT_ENV}")
+
+    with open(TEMPLATE, encoding="utf-8") as f:
+        text = f.read()
+    # json.dumps gives a valid double-quoted YAML scalar; strip the quotes the template has.
+    text = text.replace('"__CLIENT_KEY__"', json.dumps(client_key))
+    text = text.replace('"__CLAUDE_TOKEN__"', json.dumps(claude_token))
+
+    fd, tmp = tempfile.mkstemp(dir=os.path.dirname(CONFIG), prefix=".config.")
+    with os.fdopen(fd, "w", encoding="utf-8") as f:
+        f.write(text)
+    os.chmod(tmp, 0o600)
+    st = os.stat(os.path.dirname(CONFIG))
+    os.chown(tmp, st.st_uid, st.st_gid)
+    for path in (CLIENT_KEY,):
+        os.chown(path, st.st_uid, st.st_gid)
+    os.replace(tmp, CONFIG)
+    print(f"Rendered {CONFIG}")
+    # The config watcher does not see an atomic rename, so restart to apply it.
+    subprocess.run(["systemctl", "try-restart", "cliproxyapi"], check=False)
+
+
+if __name__ == "__main__":
+    main()

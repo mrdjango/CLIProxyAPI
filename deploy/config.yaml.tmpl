@@ -1,0 +1,81 @@
+# CLIProxyAPI config for the models-gateway host (single client: models-gateway).
+# Rendered to /var/lib/cliproxy/config.yaml by /usr/local/sbin/cliproxy-render-config.
+# __CLIENT_KEY__ and __CLAUDE_TOKEN__ are filled in on the host; never commit real values.
+config-version: 8
+
+server:
+  # Private network only, next to agent-cli-to-api (10.0.0.3:8000).
+  host: "10.0.0.3"
+  port: 8317
+  trusted-proxies: []
+  tls:
+    enable: false
+  discovery:
+    enabled: false
+
+management:
+  # Empty secret-key disables the Management API (404) and its web panel.
+  allow-remote: false
+  secret-key: ""
+  disable-control-panel: true
+  disable-auto-update-panel: true
+
+access:
+  api-keys:
+    - "__CLIENT_KEY__"
+
+routing:
+  strategy: "round-robin"
+  session-affinity: false
+  force-model-prefix: false
+  retry:
+    request-retry: 3
+    max-retry-credentials: 0
+    max-retry-interval: 30
+
+requests:
+  proxy-url: ""
+  passthrough-headers: false
+  streaming:
+    keepalive-seconds: 15
+    bootstrap-retries: 1
+
+# Claude subscription: the same `claude setup-token` (sk-ant-oat...) that agent-cli-to-api uses.
+# sk-ant-oat tokens are sent as Claude Code OAuth credentials.
+api-keys:
+  claude:
+    - name: claude-subscription
+      keys:
+        - api-key: "__CLAUDE_TOKEN__"
+
+# Codex: OAuth file created by `cli-proxy-api -codex-device-login` in auth-dir.
+# Antigravity: OAuth file created by `cli-proxy-api -antigravity-login` in auth-dir.
+oauth:
+  auth-dir: "/var/lib/cliproxy/auths"
+  # Antigravity also offers Claude models. Rename them so a bare Claude name only ever
+  # reaches the Claude subscription (one model name, one provider).
+  model-alias:
+    antigravity:
+      - name: "claude-sonnet-4-6"
+        alias: "agy:claude-sonnet-4-6"
+        force-mapping: true
+      - name: "claude-opus-4-6-thinking"
+        alias: "agy:claude-opus-4-6-thinking"
+        force-mapping: true
+
+multimedia:
+  # Only use image_generation when the client sends it; never inject it.
+  disable-image-generation: "passthrough"
+
+observability:
+  logs:
+    debug: false
+    logging-to-file: false
+    request-log: false
+  usage:
+    usage-statistics-enabled: false
+  pprof:
+    enable: false
+
+plugins:
+  enabled: false

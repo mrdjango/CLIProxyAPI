@@ -1,0 +1,36 @@
+[Unit]
+Description=CLIProxyAPI gateway (Codex + Claude) for models-gateway
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=cliproxy
+Group=cliproxy
+WorkingDirectory=/var/lib/cliproxy
+Environment=HOME=/var/lib/cliproxy
+ExecStart=/opt/cliproxyapi/cli-proxy-api -config /var/lib/cliproxy/config.yaml
+Restart=on-failure
+RestartSec=5
+
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/var/lib/cliproxy
+InaccessiblePaths=/etc/agent-cli-to-api.env /var/lib/agentgw
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+RestrictSUIDSGID=yes
+RestrictNamespaces=yes
+LockPersonality=yes
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX AF_NETLINK
+CapabilityBoundingSet=
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target
