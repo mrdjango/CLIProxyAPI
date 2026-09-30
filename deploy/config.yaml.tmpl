@@ -62,6 +62,11 @@ oauth:
       - name: "claude-opus-4-6-thinking"
         alias: "agy:claude-opus-4-6-thinking"
         force-mapping: true
+  # xAI (Grok): OAuth file created by `cli-proxy-api -xai-login` in auth-dir.
+  providers:
+    xai:
+      # Web search stays opt-in: never add x_search unless the client sends it.
+      inject-x-search: false
 
 multimedia:
   # Only use image_generation when the client sends it; never inject it.
