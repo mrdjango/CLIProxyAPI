@@ -14,10 +14,13 @@ server:
     enabled: false
 
 management:
-  # Empty secret-key disables the Management API (404) and its web panel.
+  # The Management API and dashboard are enabled by MANAGEMENT_PASSWORD in
+  # /etc/cliproxyapi/management.env (see cliproxyapi.service). That password also allows
+  # private-network access, which an SSH tunnel to 10.0.0.3 needs. Leave secret-key empty.
   allow-remote: false
   secret-key: ""
-  disable-control-panel: true
+  # Dashboard at /management.html, downloaded once from panel-github-repository.
+  disable-control-panel: false
   disable-auto-update-panel: true
 
 access:

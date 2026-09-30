@@ -9,6 +9,8 @@ User=cliproxy
 Group=cliproxy
 WorkingDirectory=/var/lib/cliproxy
 Environment=HOME=/var/lib/cliproxy
+# MANAGEMENT_PASSWORD=... enables the Management API and dashboard (root-only file).
+EnvironmentFile=-/etc/cliproxyapi/management.env
 ExecStart=/opt/cliproxyapi/cli-proxy-api -config /var/lib/cliproxy/config.yaml
 Restart=on-failure
 RestartSec=5
@@ -17,7 +19,7 @@ NoNewPrivileges=yes
 ProtectSystem=strict
 ProtectHome=yes
 ReadWritePaths=/var/lib/cliproxy
-InaccessiblePaths=/etc/agent-cli-to-api.env /var/lib/agentgw
+InaccessiblePaths=/etc/agent-cli-to-api.env /var/lib/agentgw /etc/cliproxyapi/management.env
 PrivateTmp=yes
 PrivateDevices=yes
 ProtectKernelTunables=yes
