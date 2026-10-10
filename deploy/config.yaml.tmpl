@@ -65,6 +65,12 @@ oauth:
       - name: "claude-opus-4-6-thinking"
         alias: "agy:claude-opus-4-6-thinking"
         force-mapping: true
+      - name: "claude-sonnet-5-5-high"
+        alias: "agy:claude-sonnet-5-5-high"
+        force-mapping: true
+      - name: "claude-opus-5-5-high"
+        alias: "agy:claude-opus-5-5-high"
+        force-mapping: true
     # The model catalog only lists these Claude models under their dated IDs. Also expose
     # the undated names clients send (fork keeps the dated IDs). Global aliases skip
     # api-keys groups, so these route through the Claude OAuth login in auth-dir.
