@@ -65,6 +65,22 @@ oauth:
       - name: "claude-opus-4-6-thinking"
         alias: "agy:claude-opus-4-6-thinking"
         force-mapping: true
+    # The model catalog only lists these Claude models under their dated IDs. Also expose
+    # the undated names clients send (fork keeps the dated IDs). Global aliases skip
+    # api-keys groups, so these route through the Claude OAuth login in auth-dir.
+    claude:
+      - name: "claude-haiku-4-5-20251001"
+        alias: "claude-haiku-4-5"
+        fork: true
+        force-mapping: true
+      - name: "claude-sonnet-4-5-20250929"
+        alias: "claude-sonnet-4-5"
+        fork: true
+        force-mapping: true
+      - name: "claude-opus-4-5-20251101"
+        alias: "claude-opus-4-5"
+        fork: true
+        force-mapping: true
   # xAI (Grok): OAuth file created by `cli-proxy-api -xai-login` in auth-dir.
   providers:
     xai:
