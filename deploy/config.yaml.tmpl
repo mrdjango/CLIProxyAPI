@@ -97,9 +97,10 @@ oauth:
         fork: true
         force-mapping: true
   # Hide models the accounts cannot use, so /v1/models lists only models that answer
-  # (checked 2026-11-02; Devin list extended 2026-11-09). Kimi: the subscription has no
-  # Kimi Code access, so every model returns 403. Devin: only devin/swe-1-6-slow works; the rest return 403 "no longer
-  # available for your account" (devin/swe-1-7 returns an upstream internal error).
+  # (checked 2026-11-02; Devin list extended 2026-11-09 and 2026-11-14).
+  # Kimi: the subscription has no Kimi Code access, so every model returns 403.
+  # Devin: only devin/swe-1-6-slow works; the rest return 403 "no longer available
+  # for your account" (devin/swe-1-7 returns an upstream internal error).
   # Remove an entry once the account can use that model again.
   excluded-models:
     kimi-ai:
@@ -107,6 +108,7 @@ oauth:
     devin:
       - "devin/claude-5-fable"
       - "devin/claude-fable-5-1"
+      - "devin/claude-fable-5-2"
       - "devin/claude-haiku-5-5"
       - "devin/claude-opus-4-6"
       - "devin/claude-opus-4-6-1m"
@@ -126,6 +128,7 @@ oauth:
       - "devin/gemini-3-7-flash"
       - "devin/gemini-3-8-flash"
       - "devin/gemini-4-argon"
+      - "devin/gemini-4-carbon"
       - "devin/glm-5-2"
       - "devin/glm-5-2-1m"
       - "devin/glm-5-3"
@@ -146,6 +149,7 @@ oauth:
       - "devin/kimi-k2-6"
       - "devin/kimi-k2-7"
       - "devin/kimi-k3"
+      - "devin/kimi-k3-1-pro"
       - "devin/muse-wonder-1-0"
       - "devin/nemotron-3-5-super"
       - "devin/nemotron-3-ultra"
