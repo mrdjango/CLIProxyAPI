@@ -43,6 +43,15 @@ requests:
     keepalive-seconds: 15
     bootstrap-retries: 1
 
+# One model name, one model: never let Anthropic answer a refused request with another
+# model. CLIProxyAPI builds before v8.0.69 added server-side refusal fallbacks to cloaked
+# Claude requests by default (claude-opus-5-5 -> claude-opus-4-8, claude-fable-5-1 ->
+# claude-opus-5). The upstream default is now false; pin it so a default change cannot
+# turn it back on.
+upstream:
+  claude:
+    server-side-fallback: false
+
 # Claude subscription: the same `claude setup-token` (sk-ant-oat...) that agent-cli-to-api uses.
 # sk-ant-oat tokens are sent as Claude Code OAuth credentials.
 api-keys:
